@@ -450,6 +450,14 @@ html, body {
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
+/* 去掉 AMap marker label 的默认样式（白色背景+蓝色描边） */
+.amap-marker-label {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
 /* ===== 信息窗体 ===== */
 .info-window {
     padding: 4px 0;
