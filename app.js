@@ -140,12 +140,15 @@
         var content = JSON.stringify(data, null, 2);
         var base64 = btoa(unescape(encodeURIComponent(content)));
 
-        // 先获取当前文件 SHA
         fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, {
             headers: { 'Authorization': 'Bearer ' + token }
         })
-        .then(function (r) { return r.json(); })
+        .then(function (r) {
+            if (!r.ok) throw new Error('GET failed: ' + r.status);
+            return r.json();
+        })
         .then(function (fileInfo) {
+            if (!fileInfo.sha) throw new Error('No SHA returned');
             return fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, {
                 method: 'PUT',
                 headers: {
@@ -153,22 +156,21 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: 'Update locations',
+                    message: 'Update locations (' + data.length + ' items)',
                     content: base64,
                     sha: fileInfo.sha
                 })
             });
         })
-        .then(function (r) { return r.json(); })
-        .then(function (result) {
-            if (result.content) {
-                showToast('已发布');
-            } else if (result.message) {
-                console.error('Publish failed:', result.message);
-            }
+        .then(function (r) {
+            if (!r.ok) throw new Error('PUT failed: ' + r.status);
+            return r.json();
+        })
+        .then(function () {
+            showToast('已发布');
         })
         .catch(function (e) {
-            console.error('Publish error:', e);
+            showToast('发布失败: ' + e.message);
         });
     }
 
