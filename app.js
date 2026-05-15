@@ -329,8 +329,8 @@
                 position: [lng, lat],
                 title: loc.name,
                 label: {
-                    content: loc.count + '台Moment',
-                    offset: new AMap.Pixel(0, -28),
+                    content: '<div style="text-align:center;line-height:1.3;"><b>' + escHtml(loc.name) + '</b><br>' + loc.count + '台Moment</div>',
+                    offset: new AMap.Pixel(0, -44),
                     direction: 'top'
                 },
                 zIndex: 100
