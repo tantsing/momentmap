@@ -24,7 +24,7 @@
     "remark": ""
   },
   {
-    "id": "loc_1778826530093_ip9de",
+    "id": "loc_1778829924877_pfgs4",
     "name": "Captain George",
     "lng": 106.704348,
     "lat": 26.560031,
@@ -36,38 +36,14 @@
     "remark": ""
   },
   {
-    "id": "loc_1778828057051_00e4x",
-    "name": "Luckin Origin Lab",
-    "lng": 114.059265,
-    "lat": 22.604135,
-    "province": "广东省",
-    "city": "深圳市",
-    "district": "龙岗区",
-    "address": "星河world",
-    "count": 20,
-    "remark": ""
-  },
-  {
-    "id": "loc_1778828589131_8nxnw",
-    "name": "三又二分之一 3½",
-    "lng": 121.456228,
-    "lat": 31.202884,
+    "id": "loc_1778831072849_6b5yj",
+    "name": "Captain George",
+    "lng": 121.455521,
+    "lat": 31.204026,
     "province": "上海市",
     "city": "上海市",
     "district": "徐汇区",
-    "address": "太原路305",
-    "count": 5,
-    "remark": ""
-  },
-  {
-    "id": "loc_1778828651093_05vys",
-    "name": "Blacksheep Espresso",
-    "lng": 121.467319,
-    "lat": 31.208624,
-    "province": "上海市",
-    "city": "上海市",
-    "district": "黄浦区",
-    "address": "建国中路169-4号",
+    "address": "太原路236号",
     "count": 5,
     "remark": ""
   }
