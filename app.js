@@ -62,19 +62,64 @@
     // 数据存储
     // ============================================================
     function loadLocations() {
+        // 从 JSON 文件加载基础数据（访客和 admin 共享）
+        fetch('locations.json')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                locations = Array.isArray(data) ? data : [];
+                mergeLocalStorage();
+                dataReady = true;
+                tryInit();
+            })
+            .catch(function () {
+                // JSON 加载失败，回退到 localStorage
+                locations = [];
+                mergeLocalStorage();
+                dataReady = true;
+                tryInit();
+            });
+    }
+
+    function mergeLocalStorage() {
         try {
-            const raw = localStorage.getItem(STORAGE_KEY);
+            var raw = localStorage.getItem(STORAGE_KEY);
             if (raw) {
-                locations = JSON.parse(raw);
-                if (!Array.isArray(locations)) locations = [];
+                var local = JSON.parse(raw);
+                if (Array.isArray(local)) {
+                    // localStorage 数据覆盖同 ID 的 JSON 数据（admin 的未发布修改）
+                    local.forEach(function (l) {
+                        var idx = locations.findIndex(function (x) { return x.id === l.id; });
+                        if (idx >= 0) {
+                            locations[idx] = l;
+                        } else {
+                            locations.push(l);
+                        }
+                    });
+                }
             }
-        } catch (e) {
-            locations = [];
-        }
+        } catch (e) {}
     }
 
     function saveLocations() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(locations));
+    }
+
+    function exportLocationsJSON() {
+        var data = locations.map(function (l) {
+            return {
+                id: l.id, name: l.name, lng: l.lng, lat: l.lat,
+                province: l.province || '', city: l.city || '', district: l.district || '',
+                address: l.address || '', count: l.count, remark: l.remark || ''
+            };
+        });
+        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'locations.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('已下载 locations.json，请替换仓库中的文件并推送');
     }
 
     function genId() {
@@ -737,6 +782,13 @@
         return parts.join('');
     }
 
+    // 导出数据
+    const btnExport = $('#btn-export');
+    btnExport.addEventListener('click', function () {
+        if (locations.length === 0) { showToast('暂无数据可导出'); return; }
+        exportLocationsJSON();
+    });
+
     // 级联事件绑定
     formProvince.addEventListener('change', onProvinceChange);
     formCity.addEventListener('change', onCityChange);
@@ -1062,16 +1114,15 @@
     // ============================================================
     // 入口
     // ============================================================
-    function init() {
-        loadLocations();
+    var dataReady = false;
+    var amapReady = false;
+
+    function tryInit() {
+        if (!dataReady || !amapReady) return;
         initMap();
         renderList();
         panelCount.textContent = locations.length;
 
-        // 检查管理员权限
-        checkAdminAuth();
-
-        // bfcache 恢复时重建地图（解决后退/前进时的黑屏）
         window.addEventListener('pageshow', function (e) {
             if (e.persisted) {
                 if (map) { map.destroy(); map = null; }
@@ -1081,7 +1132,6 @@
             }
         });
 
-        // 键盘快捷键
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 if (!authOverlay.classList.contains('modal-hidden')) {
@@ -1092,7 +1142,6 @@
             }
         });
 
-        // 监听 hash 变化（用户手动修改 URL）
         window.addEventListener('hashchange', function () {
             if (!isAdmin && window.location.hash === '#admin') {
                 showAuthModal();
@@ -1109,8 +1158,11 @@
         }
     }
 
-    // 立即检查权限（不等地图加载），避免 SDK 加载慢导致弹窗延迟
+    // 启动：加载数据 → 等待 SDK → 初始化地图
     loadLocations();
     checkAdminAuth();
-    waitForAMap(init);
+    waitForAMap(function () {
+        amapReady = true;
+        tryInit();
+    });
 })();
