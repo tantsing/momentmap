@@ -46,7 +46,7 @@
     // 管理员密码 SHA-256 哈希
     const ADMIN_PW_HASH = 'a4626940c915b02b81023846ff6adad2bea4171af494fca87b1a150f23a214e7';
     // GitHub 配置（发布用）
-    function getGithubToken() { return sessionStorage.getItem('momentmap_gh_token') || ''; }
+    function getGithubToken() { return sessionStorage.getItem('momentmap_gh_token') || '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'; }
     const GITHUB_REPO = 'tantsing/momentmap';
     const GITHUB_FILE = 'locations.json';
     let locations = [];
@@ -194,16 +194,6 @@
         btnLock.classList.remove('hidden');
         renderList();
         if (isPanelExpanded) renderList();
-        // 检查 GitHub Token
-        if (!sessionStorage.getItem('momentmap_gh_token')) {
-            setTimeout(function () {
-                var token = prompt('请输入 GitHub Personal Access Token（repo 权限）：\n\n在 https://github.com/settings/tokens 创建\n留空则跳过，保存时不会自动发布');
-                if (token && token.trim()) {
-                    sessionStorage.setItem('momentmap_gh_token', token.trim());
-                    showToast('Token 已保存，发布功能已启用');
-                }
-            }, 500);
-        }
         showToast('管理验证通过');
     }
 
