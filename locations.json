@@ -58,5 +58,17 @@
     "address": "太原路305",
     "count": 5,
     "remark": ""
+  },
+  {
+    "id": "loc_1778828651093_05vys",
+    "name": "Blacksheep Espresso",
+    "lng": 121.467319,
+    "lat": 31.208624,
+    "province": "上海市",
+    "city": "上海市",
+    "district": "黄浦区",
+    "address": "建国中路169-4号",
+    "count": 5,
+    "remark": ""
   }
 ]
