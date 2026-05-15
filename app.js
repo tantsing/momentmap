@@ -43,8 +43,8 @@
     // ============================================================
     const STORAGE_KEY = 'momentmap_locations';
     const AUTH_SESSION_KEY = 'momentmap_auth';
-    // 默认密码 admin123，SHA-256 哈希（可在下方替换为新密码的哈希值）
-    const ADMIN_PW_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+    // 管理员密码 SHA-256 哈希
+    const ADMIN_PW_HASH = 'a4626940c915b02b81023846ff6adad2bea4171af494fca87b1a150f23a214e7';
     let locations = [];
     let map;
     let geocoder;
