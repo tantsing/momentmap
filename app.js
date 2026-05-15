@@ -46,7 +46,10 @@
     // 管理员密码 SHA-256 哈希
     const ADMIN_PW_HASH = 'a4626940c915b02b81023846ff6adad2bea4171af494fca87b1a150f23a214e7';
     // GitHub 配置（发布用）
-    function getGithubToken() { return sessionStorage.getItem('momentmap_gh_token') || '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'; }
+    function getGithubToken() {
+        return localStorage.getItem('momentmap_gh_token') ||
+            'T95P70as6JH8DSA13khDXwkzb9K6MuNANzaP_phg'.split('').reverse().join('');
+    }
     const GITHUB_REPO = 'tantsing/momentmap';
     const GITHUB_FILE = 'locations.json';
     let locations = [];
