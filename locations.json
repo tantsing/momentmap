@@ -10,5 +10,17 @@
     "address": "太原路236号",
     "count": 20,
     "remark": ""
+  },
+  {
+    "id": "loc_1778819620250_p2dbt",
+    "name": "DiFluid",
+    "lng": 114.005679,
+    "lat": 22.647941,
+    "province": "广东省",
+    "city": "深圳市",
+    "district": "龙华区",
+    "address": "锦华大厦",
+    "count": 50,
+    "remark": ""
   }
 ]
