@@ -493,28 +493,85 @@
     // ============================================================
     // 底部面板
     // ============================================================
-    panelHandle.addEventListener('click', function () {
-        togglePanel();
-    });
+    // ============================================================
+    // 面板拖拽
+    // ============================================================
+    var panelDragY = 0;
+    var panelStartY = 0;
+    var panelStartOffset = 0;
+    var panelTravel = 380 - 56; // 面板可拖拽距离
+
+    function getPanelOffset() {
+        var t = bottomPanel.style.transform || '';
+        var m = t.match(/translateY\(([-\d.]+)px\)/);
+        return m ? parseFloat(m[1]) : 0;
+    }
+
+    function setPanelOffset(y) {
+        y = Math.max(0, Math.min(panelTravel, y));
+        bottomPanel.style.transform = 'translateY(' + y + 'px)';
+        bottomPanel.style.transition = 'none';
+    }
+
+    function snapPanel(y) {
+        bottomPanel.style.transition = '';
+        if (y > panelTravel / 2) {
+            collapsePanel();
+        } else {
+            expandPanel();
+        }
+    }
+
+    panelHandle.addEventListener('mousedown', onDragStart);
+    panelHandle.addEventListener('touchstart', onDragStart, { passive: false });
+
+    function onDragStart(e) {
+        e.preventDefault();
+        panelStartY = e.touches ? e.touches[0].clientY : e.clientY;
+        panelStartOffset = isPanelExpanded ? 0 : panelTravel;
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchmove', onDragMove, { passive: false });
+        document.addEventListener('touchend', onDragEnd);
+    }
+
+    function onDragMove(e) {
+        var currentY = e.touches ? e.touches[0].clientY : e.clientY;
+        var delta = currentY - panelStartY;
+        // 向下拖动 = 收起面板（translateY 增大）
+        var offset = panelStartOffset + delta;
+        setPanelOffset(offset);
+    }
+
+    function onDragEnd(e) {
+        document.removeEventListener('mousemove', onDragMove);
+        document.removeEventListener('mouseup', onDragEnd);
+        document.removeEventListener('touchmove', onDragMove);
+        document.removeEventListener('touchend', onDragEnd);
+        var offset = getPanelOffset();
+        snapPanel(offset);
+    }
 
     function togglePanel() {
-        var collapsed = bottomPanel.classList.toggle('panel-collapsed');
-        isPanelExpanded = !collapsed;
         if (isPanelExpanded) {
-            renderList();
+            collapsePanel();
         } else {
-            renderPills();
+            expandPanel();
         }
     }
 
     function expandPanel() {
         bottomPanel.classList.remove('panel-collapsed');
+        bottomPanel.style.transform = '';
+        bottomPanel.style.transition = '';
         isPanelExpanded = true;
         renderList();
     }
 
     function collapsePanel() {
         bottomPanel.classList.add('panel-collapsed');
+        bottomPanel.style.transform = '';
+        bottomPanel.style.transition = '';
         isPanelExpanded = false;
     }
 
