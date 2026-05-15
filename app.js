@@ -329,7 +329,7 @@
                 position: [lng, lat],
                 title: loc.name,
                 label: {
-                    content: '<div style="text-align:center;line-height:1.3;"><b>' + escHtml(loc.name) + '</b><br>' + loc.count + '台Moment</div>',
+                    content: '<div style="text-align:center;background:#1677ff;color:#fff;padding:5px 14px;border-radius:18px;line-height:1.4;box-shadow:0 2px 8px rgba(22,119,255,0.35);max-width:160px;"><b>' + escHtml(loc.name) + '</b><br>' + loc.count + '台Moment</div>',
                     offset: new AMap.Pixel(0, -44),
                     direction: 'top'
                 },
