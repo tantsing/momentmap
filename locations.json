@@ -22,5 +22,41 @@
     "address": "锦华大厦",
     "count": 50,
     "remark": ""
+  },
+  {
+    "id": "loc_1778826530093_ip9de",
+    "name": "Captain George",
+    "lng": 106.704348,
+    "lat": 26.560031,
+    "province": "贵州省",
+    "city": "贵阳市",
+    "district": "南明区",
+    "address": "遵义路21号",
+    "count": 20,
+    "remark": ""
+  },
+  {
+    "id": "loc_1778828057051_00e4x",
+    "name": "Luckin Origin Lab",
+    "lng": 114.059265,
+    "lat": 22.604135,
+    "province": "广东省",
+    "city": "深圳市",
+    "district": "龙岗区",
+    "address": "星河world",
+    "count": 20,
+    "remark": ""
+  },
+  {
+    "id": "loc_1778828589131_8nxnw",
+    "name": "三又二分之一 3½",
+    "lng": 121.456228,
+    "lat": 31.202884,
+    "province": "上海市",
+    "city": "上海市",
+    "district": "徐汇区",
+    "address": "太原路305",
+    "count": 5,
+    "remark": ""
   }
 ]
