@@ -403,12 +403,17 @@
         var lng = parseFloat(loc.lng);
         var lat = parseFloat(loc.lat);
         if (isNaN(lng) || isNaN(lat)) return;
-        map.setZoomAndCenter(13, [lng, lat]);
-        if (markers[loc.id]) {
-            setTimeout(function () {
-                showInfoWindow(loc, markers[loc.id]);
-            }, 600);
-        }
+        // 先收起面板
+        collapsePanel();
+        // 等面板收起动画完成后再移动地图，确保目标位置在视口中间
+        setTimeout(function () {
+            map.setZoomAndCenter(15, [lng, lat]);
+            if (markers[loc.id]) {
+                setTimeout(function () {
+                    showInfoWindow(loc, markers[loc.id]);
+                }, 400);
+            }
+        }, 400);
     }
 
     // ============================================================
@@ -590,12 +595,8 @@
 
         panelPills.querySelectorAll('.pill-tag').forEach(function (pill) {
             pill.addEventListener('click', function () {
-                var id = this.dataset.id;
-                var loc = locations.find(function (l) { return l.id === id; });
-                if (loc) {
-                    focusOnLocation(loc);
-                    expandPanel();
-                }
+                // 胶囊标签点击 → 展开面板，不移动地图
+                expandPanel();
             });
         });
     }
