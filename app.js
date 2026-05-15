@@ -45,6 +45,10 @@
     const AUTH_SESSION_KEY = 'momentmap_auth';
     // 管理员密码 SHA-256 哈希
     const ADMIN_PW_HASH = 'a4626940c915b02b81023846ff6adad2bea4171af494fca87b1a150f23a214e7';
+    // GitHub 配置（发布用）
+    function getGithubToken() { return sessionStorage.getItem('momentmap_gh_token') || ''; }
+    const GITHUB_REPO = 'tantsing/momentmap';
+    const GITHUB_FILE = 'locations.json';
     let locations = [];
     let map;
     let geocoder;
@@ -122,6 +126,52 @@
         showToast('已下载 locations.json，请替换仓库中的文件并推送');
     }
 
+    function autoPublish() {
+        var token = getGithubToken();
+        if (!token) return;
+
+        var data = locations.map(function (l) {
+            return {
+                id: l.id, name: l.name, lng: l.lng, lat: l.lat,
+                province: l.province || '', city: l.city || '', district: l.district || '',
+                address: l.address || '', count: l.count, remark: l.remark || ''
+            };
+        });
+        var content = JSON.stringify(data, null, 2);
+        var base64 = btoa(unescape(encodeURIComponent(content)));
+
+        // 先获取当前文件 SHA
+        fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (fileInfo) {
+            return fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Update locations',
+                    content: base64,
+                    sha: fileInfo.sha
+                })
+            });
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (result) {
+            if (result.content) {
+                showToast('已发布');
+            } else if (result.message) {
+                console.error('Publish failed:', result.message);
+            }
+        })
+        .catch(function (e) {
+            console.error('Publish error:', e);
+        });
+    }
+
     function genId() {
         return 'loc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
     }
@@ -144,6 +194,16 @@
         btnLock.classList.remove('hidden');
         renderList();
         if (isPanelExpanded) renderList();
+        // 检查 GitHub Token
+        if (!sessionStorage.getItem('momentmap_gh_token')) {
+            setTimeout(function () {
+                var token = prompt('请输入 GitHub Personal Access Token（repo 权限）：\n\n在 https://github.com/settings/tokens 创建\n留空则跳过，保存时不会自动发布');
+                if (token && token.trim()) {
+                    sessionStorage.setItem('momentmap_gh_token', token.trim());
+                    showToast('Token 已保存，发布功能已启用');
+                }
+            }, 500);
+        }
         showToast('管理验证通过');
     }
 
@@ -667,6 +727,7 @@
         locations = locations.filter(function (l) { return l.id !== id; });
         removeMarkerFromMap(id);
         saveLocations();
+        autoPublish();
         renderList();
         panelCount.textContent = locations.length;
         if (infoWindow) { infoWindow.close(); infoWindow = null; }
@@ -839,13 +900,6 @@
         if (a) parts.push(a);
         return parts.join('');
     }
-
-    // 导出数据
-    const btnExport = $('#btn-export');
-    btnExport.addEventListener('click', function () {
-        if (locations.length === 0) { showToast('暂无数据可导出'); return; }
-        exportLocationsJSON();
-    });
 
     // 级联事件绑定
     formProvince.addEventListener('change', onProvinceChange);
@@ -1124,6 +1178,7 @@
         }
 
         saveLocations();
+        autoPublish();
         renderList();
         panelCount.textContent = locations.length;
         closeModal();
